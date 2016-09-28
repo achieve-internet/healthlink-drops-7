@@ -1,0 +1,11 @@
+name = Moderate mmenu
+description = "Provides an off-screen menu for moderating content."
+core = 7.x
+
+dependencies[] = jquery_update
+dependencies[] = libraries
+
+; Information added by drush on 2016-02-29
+version = "7.x-1.x-dev"
+project = "moderate_mmenu"
+datestamp = "1456774019"

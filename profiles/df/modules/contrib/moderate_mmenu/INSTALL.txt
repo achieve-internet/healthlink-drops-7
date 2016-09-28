@@ -1,0 +1,9 @@
+This module requires the jQuery.mmenu library to function.
+
+You can find mmenu here: https://github.com/BeSite/jQuery.mmenu/releases
+
+The module expects the release to be extracted to "jQuery.mmenu", without the
+release number in the directory name.
+
+For more information on installing external libraries, please visit
+https://www.drupal.org/node/1440066

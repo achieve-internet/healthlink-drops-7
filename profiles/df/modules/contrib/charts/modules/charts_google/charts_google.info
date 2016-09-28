@@ -1,0 +1,10 @@
+name = Google Charts
+description = Charts module integration with Google Charts.
+package = Charts
+core = 7.x
+dependencies[]  = charts
+
+; Information added by drush on 2015-02-13
+version = "7.x-2.0-rc1+6-dev"
+project = "charts"
+datestamp = "1423855266"

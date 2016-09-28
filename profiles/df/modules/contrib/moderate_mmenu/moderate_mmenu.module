@@ -1,0 +1,205 @@
+<?php
+
+/**
+ * @file
+ * Contains all backend logic for the Moderate mmenu module.
+ */
+
+/**
+ * Implements hook_preprocess_page().
+ *
+ * Create a off-screen menu to moderate the current node.
+ */
+function moderate_mmenu_preprocess_page(&$variables) {
+  // Check to see if the contents of $tabs is empty.
+  // This is necessary as $variables['tabs'] is never empty.
+  $has_tabs = isset($variables['tabs']) && (!empty($variables['tabs']['#primary']) || !empty($variables['tabs']['#secondary']));
+
+  // Check that all of our requirements are met before proceeding.
+  if (($library = libraries_detect('jQuery.mmenu')) && !empty($library['installed']) && !path_is_admin(current_path()) && isset($variables['node']) && $has_tabs) {
+    // Load the jQuery.mmenu library.
+    libraries_load('jQuery.mmenu');
+
+    // Load the jQuery.ui Draggable widget.
+    drupal_add_library('system', 'ui.draggable');
+
+    // Load our customizations.
+    $path = drupal_get_path('module', 'moderate_mmenu');
+    drupal_add_js($path . '/js/moderate_mmenu.js');
+    drupal_add_css($path . '/css/moderate_mmenu.css');
+
+    // Assemble the main menu.
+    $menu = array();
+
+    // Add local tasks.
+    $menu['tabs'] = $variables['tabs'];
+    $variables['tabs'] = array();
+
+    // Add blocks assigned to our region.
+    if (isset($variables['page']['moderate_mmenu'])) {
+      $menu['region'] = $variables['page']['moderate_mmenu'];
+    }
+
+    $node = $variables['node'];
+
+    // Process a title and subtitle for the menu link button.
+    $title = moderate_mmenu_get_menu_title($node);
+    $subtitle = moderate_mmenu_get_menu_subtitle($node);
+
+    // Create the menu link button.
+    $menu_link = array();
+    $menu_link[] = array('#markup' => '<div class="moderate-mmenu-title">' . $title . '</div>');
+    if (!empty($subtitle)) {
+      $menu_link[] = array('#markup' => '<div class="moderate-mmenu-subtitle">' . $subtitle . '</div>');
+    }
+
+    // Add our mmenu elements to the page.
+    $page = &$variables['page'];
+
+    $page['content'][] = array(
+      '#prefix' => '<nav id="moderate-mmenu">',
+      '#type' => 'container',
+      '#suffix' => '</nav>',
+      0 => $menu,
+    );
+
+    $page['content'][] = array(
+      '#prefix' => '<a class="button local-task-link" id="moderate-mmenu-link" href="#moderate-mmenu">',
+      '#type' => 'container',
+      '#suffix' => '</a>',
+      0 => $menu_link,
+    );
+  }
+}
+
+/**
+ * Generates a menu link title based on the current node type.
+ *
+ * @param object $node
+ *   The current node.
+ *
+ * @return string
+ *   A title which informs the user of the current Node's bundle.
+ */
+function moderate_mmenu_get_menu_title($node) {
+  $title = t('Moderate');
+
+  if ($node && $node->type != NULL) {
+    $title = t('Moderate @node_type', array('@node_type' => node_type_get_name($node)));
+  }
+
+  return $title;
+}
+
+/**
+ * Generates a menu link title based on the current node's status.
+ *
+ * Supports Workbench Moderation and base Drupal.
+ *
+ * @param object $node
+ *   The current node.
+ *
+ * @return string
+ *   A subtitle containing information about the Node's status.
+ */
+function moderate_mmenu_get_menu_subtitle($node) {
+  $subtitle = '';
+
+  if ($node) {
+    // Add Workbench Moderation specific messages.
+    if (module_exists('workbench_moderation') && $messages = workbench_moderation_set_message()) {
+      // Add the state of the current node to the subtitle
+      // Messages are used as they have already formatted the Workbench state.
+      $status = $messages[0]['message'];
+    }
+    else {
+      // This node or site doesn't have workbench enabled.
+      $status = $node->status == NODE_PUBLISHED ? t('Published') : t('Unpublished');
+    }
+
+    // Add node status to the subtitle.
+    $subtitle = t('(Currently Viewing: !status)', array('!status' => $status));
+
+    // Check if a draft exists and append that information to the subtitle.
+    if (isset($node->workbench_moderation)) {
+      $state = $node->workbench_moderation;
+
+      if (empty($state['published']) || $state['published']->vid != $state['current']->vid) {
+        // Format draft_status variable, if a draft exists.
+        $draft_status = $state['current']->state == 'needs_review' ? t('review') : t('editing');
+
+        // Add the draft_status to the subtitle on a new line.
+        $subtitle .= '<br />';
+        $subtitle .= t('Draft available for !draft_status', array('!draft_status' => $draft_status));
+      }
+    }
+  }
+
+  return $subtitle;
+}
+
+/**
+ * Implements hook_system_info_alter().
+ *
+ * Adds a dummy region to the current theme so that blocks can be assigned to
+ * the menu.
+ */
+function moderate_mmenu_system_info_alter(&$info, $file) {
+  if (isset($info['regions'])) {
+    $info['regions'] = array_merge($info['regions'], array('moderate_mmenu' => t('Moderate mmenu')));
+  }
+}
+
+/**
+ * Implements hook_block_info_alter().
+ *
+ * Forces the workbench moderation block into our dummy region.
+ */
+function moderate_mmenu_block_info_alter(&$blocks, $theme, $code_blocks) {
+  if (($library = libraries_detect('jQuery.mmenu')) && !empty($library['installed']) && isset($blocks['workbench']) && $theme == variable_get('theme_default', 'bartik')) {
+    // Force the Workbench Moderation Block to the moderate_mmenu region.
+    $blocks['workbench']['block']['region'] = 'moderate_mmenu';
+  }
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function moderate_mmenu_libraries_info() {
+  return array(
+    'jQuery.mmenu' => array(
+      'name' => 'jQuery.mmenu',
+      'vendor url' => 'http://mmenu.frebsite.nl',
+      'download url' => 'https://github.com/BeSite/jQuery.mmenu/zipball/master',
+      'version callback' => 'moderate_mmenu_get_version',
+      'files' => array(
+        'js' => array(
+          '/dist/js/jquery.mmenu.min.all.js',
+        ),
+        'css' => array(
+          '/dist/css/jquery.mmenu.all.css',
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Callback to return version number of jQuery.mmenu.
+ */
+function moderate_mmenu_get_version($info, $args) {
+  $path = $info['library path'];
+
+  // Load the file containing jQuery.mmenu's packaging information.
+  if ($json = file_get_contents($path . '/mmenu.jquery.json')) {
+    // Attempt to load the JSON.
+    if ($library_info = drupal_json_decode($json)) {
+      // Return the version, if it's set.
+      if (isset($library_info['version'])) {
+        return $library_info['version'];
+      }
+    }
+  }
+
+  return FALSE;
+}

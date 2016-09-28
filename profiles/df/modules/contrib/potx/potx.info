@@ -1,0 +1,13 @@
+name = Translation template extractor
+description = Provides a web interface and an API to extract translatable text from the sources of installed components.
+dependencies[] = locale
+files[] = potx.inc
+files[] = tests/potx.test
+core = 7.x
+package = Multilingual
+php = 5.1.2
+
+; Information added by drush on 2014-11-07
+version = "7.x-1.x-dev"
+project = "potx"
+datestamp = "1415369397"

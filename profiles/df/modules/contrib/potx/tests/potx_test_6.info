@@ -1,0 +1,11 @@
+name = Translation template extractor tester
+description = Test description
+package = Test package
+version = 6.x
+core = 6.x
+hidden = TRUE
+
+; Information added by drush on 2014-11-07
+version = "7.x-1.x-dev"
+project = "potx"
+datestamp = "1415369397"
