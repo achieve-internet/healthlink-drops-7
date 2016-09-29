@@ -368,7 +368,7 @@ section.pane-node-content {
   float: left;
   padding-right: 5px;
 }
-.group-top-section .group-top-right-section .field-name-field-title {
+.group-top-section .group-top-right-section .field-name-field-suffix {
   *zoom: 1;
   padding-top: 20px;
   color: #333333;
@@ -376,7 +376,7 @@ section.pane-node-content {
   font-weight: bold;
   line-height: 28px;
 }
-.group-top-section .group-top-right-section .field-name-field-title:after {
+.group-top-section .group-top-right-section .field-name-field-suffix:after {
   content: "";
   display: table;
   clear: both;
@@ -2113,9 +2113,6 @@ section.pane-menu-menu-getting-started .pane-content ul li a {
   color: white;
   font-size: 16px;
   border: 1px solid #fff;
-  border-radius: 2px;
-}
-.region-secondary-menu-block .secondary-menu li.last a {
   padding: 3px 10px;
 }
 .region-secondary-menu-block #block-search-api-page-general-search {
@@ -4988,20 +4985,20 @@ h1.page-title, .page-title.site-name {
 }
 
 .site-meta {
-  background-image: url('../images/header-texture.png?1474475621');
+  background-image: url('../images/header-texture.png?1474500540');
 }
 
 .local-task-link {
-  background-image: url('../images/stripes.png?1474475621');
-  background-image: url('../images/stripes.png?1474475621');
+  background-image: url('../images/stripes.png?1474500540');
+  background-image: url('../images/stripes.png?1474500540');
 }
 .local-task-link:hover {
-  background-image: url('../images/stripes.png?1474475621');
-  background-image: url('../images/stripes.png?1474475621');
+  background-image: url('../images/stripes.png?1474500540');
+  background-image: url('../images/stripes.png?1474500540');
 }
 
 .alternate-scheme, .site-footer {
-  background-image: url('../images/body-texture.png?1474475621');
+  background-image: url('../images/body-texture.png?1474500540');
 }
 
 /**

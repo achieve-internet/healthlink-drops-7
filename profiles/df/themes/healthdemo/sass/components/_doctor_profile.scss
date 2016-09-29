@@ -60,7 +60,7 @@ section.pane-node-content {
     }
 
   }
-  //Title + fields
+  // Title + fields
   .group-top-right-section {
     width: 65%;
     float: left;
@@ -80,7 +80,7 @@ section.pane-node-content {
       }
 
     }
-    .field-name-field-title {
+    .field-name-field-suffix {
       @include pie-clearfix;
       padding-top: 20px;
       color: #333333;
@@ -89,7 +89,7 @@ section.pane-node-content {
       line-height: 28px;
     }
 
-    ///3 columsn below title
+    // 3 columns below title
     .first-column,
     .second-column,
     .third-column {
